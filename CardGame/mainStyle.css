@@ -1,0 +1,46 @@
+body{
+	background: #2C2C2C;
+	padding: 0;
+	margin: 0;
+}
+
+#canvas{
+	max-width: 1080px;
+	height: 640px;
+	margin: 0 auto;
+	z-index: 0;
+	position:absolute;
+	right: 0;
+	left: 0;
+	top: 50px;
+	
+}
+
+#game{
+	position:absolute;
+	width: 1080px;
+	height: 640px;
+	margin: 0 auto;
+	right: 0; left: 0;
+	top: 50px;
+	z-index: 1;
+	color:white;
+	
+
+}
+
+
+.leftCol {
+	padding: 5px;
+	width:	5%;
+	float: left;
+	display:none;
+}
+
+.rightCol{
+	text-align:right;
+	padding: 5px;
+	width: 5%;
+	float: right;
+	display:none;
+}

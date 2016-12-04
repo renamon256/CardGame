@@ -1,0 +1,128 @@
+{"cards":[
+	{
+		"name":"atck",
+		"id":"atck5",
+		"pwr":5,
+		"type":"melee",
+		"effect":"none",
+		"play":"burn",
+		"remove":"trash",
+		"ap":1,
+		"scaling":["str", "A"],
+		"description":"A basic attack"
+	},
+	{
+		"name":"all out attack",
+		"id":"alloutattack",
+		"pwr":10,
+		"type":"melee",
+		"effect":"none",
+		"play":"burn",
+		"remove":"trash",
+		"ap":2,
+		"scaling":["str", "A"],
+		"description":"can only be played once/per battle"
+	},
+	{
+		"name":"mob",
+		"id":"mob",
+		"pwr":3,
+		"type":"melee",
+		"effect":"none",
+		"play":"set",
+		"remove":"trash",
+		"ap":1,
+		"scaling":["lvl", "B"],
+		"description":"summon a basic mob/to attack for you"
+	},
+	{
+		"name":"larva",
+		"id":"larva",
+		"pwr":1,
+		"type":"melee",
+		"effect":"none",
+		"play":"set",
+		"remove":"trash",
+		"ap":1,
+		"description":"spawns a larva"
+	},
+	{
+		"name":"def",
+		"id":"def",
+		"pwr":5,
+		"type":"defense",
+		"effect":"none",
+		"play":"set",
+		"remove":"trash",
+		"ap":1,
+		"description":"a basic shield"
+	},
+	{
+		"name":"Hastily Constructed Barricade",
+		"id":"HCB",
+		"pwr":2,
+		"type":"defense",
+		"effect":"none",
+		"play":"set",
+		"remove":"trash",
+		"ap":0,
+		"description":"a shoddy defense/quickly constructed"
+	},
+	{
+		"name":"sting",
+		"id":"sting",
+		"pwr":2,
+		"type":"melee",
+		"effect":"none",
+		"play" : "burn",
+		"remove":"trash",
+		"ap":1,
+		"description":"more of an annoyance/than anything else"
+	},
+	{
+		"name":"pierce",
+		"id":"pierce",
+		"pwr":3,
+		"type":"melee",
+		"effect":["pierce"],
+		"play":"burn",
+		"remove":"trash",
+		"ap":1,
+		"description":"attack that ignores/sheilds"
+	},
+	{ 
+		"name":"poison",
+		"id":"poison",
+		"pwr":2,
+		"type":"passive",
+		"effect":["poison"],
+		"play":"endTurnTarget",
+		"remove":"destroy",
+		"ap":-1,
+		"description":"does poison damage/every turn"
+	},
+	{
+		"name":"poison spore",
+		"id":"psnSpore",
+		"pwr":0,
+		"type":"melee",
+		"effect":["psnTrgt"],
+		"play":"burn",
+		"remove":"trash",
+		"ap":1,
+		"description":"poisons target if/they have no defenses"
+	},
+	{
+		"name":"cleansing wound",
+		"id":"cleansingWound",
+		"pwr": 5,
+		"type":"effect",
+		"effect": ["rmvPsnSelf", "dmgSelf"],
+		"play":"burn",
+		"remove":"trash",
+		"ap" : 0,
+		"description":"bleeds out the poison/Damages self"
+	}
+	
+]
+}

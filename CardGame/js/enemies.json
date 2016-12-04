@@ -1,0 +1,75 @@
+{"enemies":[
+	{
+		"name":"bug",
+		"personality":"agressive",
+		"deck":[],
+		"strdeck":["sting", "def", "sting+1", "sting+2", "sting", "def", "sting", "larva", "larva"],
+		"hand":[],
+		"attributes":{
+			"health" : 20,
+			"maxHealth" : 20,
+			"attack" : 1,
+			"defense" : 1,
+			"speed" : 4,
+			"intellegence" : 1,
+			"adaptability" : 1,
+			"luck" : 1
+		},
+		"apRegen" : 1,
+		"ap" : 1,
+		"xp" : 10,
+		"gp" : 5,
+		"droppedCards" : [["sting", 1],["sting+1",.5],["sting+2",.25], ["sting+3",.1]],
+		"droppedItems" : [["stinger", .5]],
+		
+	},
+	{
+		"name":"Rock",
+		"personality":"defensive",
+		"deck":[],
+		"strdeck":["def", "def", "def", "def", "def", "def", "def", "def", "def" ],
+		"hand" : [],
+		"attributes":{
+			"health" : 20,
+			"maxHealth" : 20,
+			"attack" : 1,
+			"defense" : 1,
+			"speed" : 2,
+			"intellegence" : 1,
+			"adaptability" : 1,
+			"luck" : 1
+		},
+		"apRegen" : 1,
+		"ap" : 1,
+		"xp" : 5,
+		"gp" : 5,
+		"droppedCards" : [["def", 1],["def+1",.5],["def+2",.25], ["def+3",.1]],
+		"droppedItems" : [["rock meat", 1]],
+		
+	},
+	{
+		"name":"Mushroom",
+		"personality":"poison",
+		"deck":[],
+		"strdeck":["psnSpore", "psnSpore", "psnSpore", "psnSpore", "psnSpore", "psnSpore", "psnSpore", "psnSpore"],
+		"hand" : [],
+		"attributes":{
+			"health" : 5,
+			"maxHealth" : 5,
+			"attack" : 1,
+			"defense" : 1,
+			"speed" : 4,
+			"intellegence" : 1,
+			"adaptability" : 1,
+			"luck" : 1
+		},
+		"apRegen" : 1,
+		"ap" : 1,
+		"xp" : 5,
+		"gp" : 5,
+		"droppedCards" : [["psnSpore", 1],["psnSpore+1",.5],["psnSpore+2",.25], ["psnSpore+3",.1]],
+		"droppedItems" : [["poison mushroom", .5]],
+		
+	}
+	]
+}
