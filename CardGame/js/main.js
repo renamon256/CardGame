@@ -41,6 +41,9 @@ app.main = {
 			items: [],
 			
 		},
+		
+		oldPlayerAttributes : null, //create an old player to reset the stats
+		
 		actions : [], //keeps track of moves
 		//used for animations
 		time : 0,
@@ -89,7 +92,7 @@ app.main = {
 		overlayedCards: [], //what cards are being overlayed
 		
 		cardHeight: 250,
-		cardWidth: 150,
+		cardWidth: 180,
 		
 		PHASE: null,
 		GAMEMODE: "OVERWORLD",
@@ -139,16 +142,7 @@ app.main = {
 				this.strdeck = enemy.strdeck;
 				this.deck = enemy.deck;
 				this.hand = enemy.hand;
-				this.attributes = {
-					health : enemy.attributes.health,
-					maxHealth : enemy.attributes.maxHealth,
-					attack : enemy.attributes.attack,
-					defense : enemy.attributes.defense,
-					speed : enemy.attributes.speed,
-					intellegence : enemy.attributes.intellegence,
-					adaptability : enemy.attributes.adaptability,
-					luck : enemy.attributes.luck
-				}
+				this.attributes = new app.main.copyAttributes(enemy)
 				this.timerGoal = 100/enemy.attributes.speed
 				this.personality = enemy.personality;
 				this.trash = [];
@@ -161,6 +155,17 @@ app.main = {
 				this.droppedItems = enemy.droppedItems;
 				this.droppedCards = enemy.droppedCards;
 			};
+			
+			this.copyAttributes = function(obj){
+				this.health = obj.attributes.health,
+				this.maxHealth = obj.attributes.maxHealth,
+				this.attack = obj.attributes.attack,
+				this.defense = obj.attributes.defense,
+				this.speed = obj.attributes.speed,
+				this.intellegence = obj.attributes.intellegence,
+				this.adaptability = obj.attributes.adaptability,
+				this.luck = obj.attributes.luck
+			}
 			
 			this.getAllCards();
 			this.canvasInit();
@@ -230,8 +235,10 @@ app.main = {
 			if (this.GAMEMODE == "ENDCARDGAME"){this.renderResults();}
 			if (this.GAMEMODE == "OVERWORLD"){app.overworld.update();}
 			if (this.GAMEMODE == "DECKBUILDER"){app.deckBuilder.update();}
-			this.isLMouseDown = false;
-			this.isRMouseDown = false;
+			if (this.GAMEMODE != "OVERWORLD"){
+				this.isLMouseDown = false;
+				this.isRMouseDown = false;
+			}
 		},
 
 		
@@ -701,6 +708,11 @@ app.main = {
 					if (e.button == 0){app.main.isLMouseDown = true;} //left click
 					if (e.button == 2){app.main.isRMouseDown = true;} //right click
 			}, false);
+			game.addEventListener("mouseup", 
+				function(e){
+					if (e.button == 0){app.main.isLMouseDown = false;} //left click
+					if (e.button == 2){app.main.isRMouseDown = false;} //right click
+			}, false);
 			game.onfocus = function(){console.log("focus")};
 			game.onblur = function(){console.log("blur")};
 			this.update();
@@ -711,6 +723,7 @@ app.main = {
 				console.log(enemiesStr[i])
 				this.getDeck(enemiesStr[i]);
 			}
+			this.oldPlayerAttributes = new this.copyAttributes(this.player);
 			
 			this.player.timerGoal = 100/this.player.attributes.speed;
 			//this.getDeck("bug");

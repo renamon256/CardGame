@@ -51,7 +51,7 @@ app.cards = {
 			if (target.defendCards[i].type != "passive"){
 				shield = target.defendCards[i];
 			}
-			if (card.effect != "pierce" && shield != null){
+			if (this.hasEffect(card, "pierce") == false && shield != null){
 				dmg -= shield.pwr;
 				if (shield.pwr <= olddmg){
 					this.remove(shield,target);
@@ -155,17 +155,18 @@ app.cards = {
 		
 		for (var i = 0; i < card.effect.length; i++){
 			effect = card.effect[i];
-			if (card.play == "endTurnTarget" && app.main.PHASE == "EndTurn" && app.main.turnOrder[app.main.turnOrderIndex] == card.target.id){
-				if (effect == "poison"){
+			if (effect.timing == "endTurnTarget" && app.main.PHASE == "EndTurn" && app.main.turnOrder[app.main.turnOrderIndex] == card.target.id){
+				if (effect.id == "poison"){
 					card.target.attributes.health -= card.pwr;
 					app.main.checkDead;
 				}
 			}
 			if (card.play == "burn"){
-				if (effect == "rmvPsnSelf"){
+				if (effect.id == "rmvPsnSelf"){
 					//have to go from end to beginning because of splicing
 					for (var j = card.owner.defendCards.length - 1; j >= 0 ; j--){
-						if (card.owner.defendCards[j].effect == "poison"){
+						if (this.hasEffect(card.owner.defendCards[j], "poison")){
+							console.log("removing poison");
 							var psnCard = card.owner.defendCards[j];
 							console.log(psnCard.id + " removed");
 							this.destroy(psnCard, psnCard.target);
@@ -173,12 +174,22 @@ app.cards = {
 						}
 					}
 				}
-				if (effect == "dmgSelf"){
+				if (effect.id == "dmgSelf"){
 					card.owner.attributes.health -= card.pwr;
 				}
 			}
 			
-	}	}
+		}	
+	},
+	
+	hasEffect : function(card, effect){
+		console.log("checking " + card.id + " for " + effect);
+		for (var i = 0; i < card.effect.length; i++){
+			if (card.effect[i].id == effect){return true}
+		}
+		
+		return false
+	},
 	
 	
 };
