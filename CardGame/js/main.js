@@ -6,6 +6,7 @@ var app = app || {};
 
 
 app.main = {
+		currCell : "testCell",
 		player : {
 			id : "player",
 			name : "player",
@@ -81,7 +82,7 @@ app.main = {
 		canvas: undefined,
 		ctx : undefined,
 		WIDTH : 1080,
-		HEIGHT : 640,
+		HIEGHT : 640,
 		animationID: 0,
 		
 		selectedCard: null,
@@ -101,6 +102,13 @@ app.main = {
 		droppedItems : [],
 		gainedXp : 0,
 		gainedGp : 0,
+		
+		//fps tracker
+		lastCalledTime : null,
+		lastFrameUpdate : null,
+		fps : 0,
+		delta : 0,
+		timesCalled : 0,
 		
 		init : function(){
 			
@@ -198,6 +206,25 @@ app.main = {
 		//game loop
 		update : function (){
 			this.animationID = requestAnimationFrame(this.update.bind(this));
+			
+			if (!this.lastCalledTime){
+				this.lastCalledTime = Date.now();
+				this.lastFrameUpdate = Date.now();
+				return;
+			}
+			
+			this.delta += (Date.now() - this.lastCalledTime)/1000;
+			this.timesCalled++;
+			
+			this.lastCalledTime = Date.now();
+			if (Date.now() >= this.lastFrameUpdate + 1000){
+				this.fps = 1/(this.delta/this.timesCalled);
+				this.lastFrameUpdate = Date.now();
+				this.delta = 0;
+				this.timesCalled = 0;
+			}
+			
+			
 			//console.log(this.GAMEMODE);
 			if (this.GAMEMODE == "CARDGAME"){
 				this.PHASE = "update"
@@ -317,7 +344,7 @@ app.main = {
 			this.ctx.font = "12px Arial";
 			this.ctx.textAlign = "right";
 			for (var i = 0; i < this.actions.length; i++){
-				this.ctx.fillText(this.actions[i], this.WIDTH - 10, (this.HEIGHT * .4) + (i * 20) )
+				this.ctx.fillText(this.actions[i], this.WIDTH - 10, (this.HIEGHT * .4) + (i * 20) )
 			}
 			
 			this.ctx.restore();
@@ -405,7 +432,7 @@ app.main = {
 					
 					//cards on the field
 					if (name == this.player){
-						card.y = this.HEIGHT;
+						card.y = this.HIEGHT;
 						if (placement == "defend"){card.y -= this.cardHeight * .7; this.ctx.transform(.5,0,0,.5,card.x/2,card.y/2);}
 						if (placement == "attack"){card.y -= this.cardHeight; this.ctx.transform(.5,0,0,.5,card.x/2,card.y/2);}
 						if (placement == "trash"){card.x = this.cardWidth/2; card.y -=this.cardHeight/3; this.ctx.transform(.5,0,0,.5,card.x/2,card.y/2);}
@@ -432,7 +459,7 @@ app.main = {
 							this.renderCard(card, owner, "medium");//drawing card
 							
 							//changing selected card
-							if (this.mouseY > this.HEIGHT - halfHeight && name == this.player && placement == "hand"){
+							if (this.mouseY > this.HIEGHT - halfHeight && name == this.player && placement == "hand"){
 								if (i == this.selectedIndex + 1 || i == this.selectedIndex - 1){
 									if (this.mouseX > card.x - halfWidth && this.mouseX < card.x + halfWidth){
 										this.selectedCard = card;
@@ -446,7 +473,7 @@ app.main = {
 							}
 						}
 						else{
-							if (this.mouseY > this.HEIGHT - this.cardHeight && name == this.player && placement == "hand"){
+							if (this.mouseY > this.HIEGHT - this.cardHeight && name == this.player && placement == "hand"){
 								//selecting current card
 								if (this.mouseX > card.x - halfWidth && this.mouseX < card.x + spacing - halfWidth){
 									if (this.turnOrder[this.turnOrderIndex] == "player" && this.isLMouseDown){
@@ -543,11 +570,11 @@ app.main = {
 			//render selected cards on overlay to see more clearly
 			var card;
 			this.ctx.fillStyle = "rgba(0,0,0,.2)"
-			this.ctx.fillRect(0,0,this.WIDTH, this.HEIGHT);
+			this.ctx.fillRect(0,0,this.WIDTH, this.HIEGHT);
 			for (var i = 0; i < this.overlayedCards.length; i++){
 				this.ctx.save();
 				card = this.overlayedCards[i];
-				card.y = this.HEIGHT/2;
+				card.y = this.HIEGHT/2;
 				card.x = (this.WIDTH/this.overlayedCards.length) * i + this.cardWidth * 1.2;
 				this.ctx.transform(1,0,0,1, card.x, card.y);
 				this.renderCard(this.overlayedCards[i], "none", "large")
@@ -616,6 +643,7 @@ app.main = {
 
 			}
 			else{
+				var startTime = Date.now();
 				xhrDeck.onload = function(){
 					var myJSON = eval('(' + xhrDeck.responseText + ')');
 					//find the enemy type
@@ -638,15 +666,16 @@ app.main = {
 									var card = new app.main.copyCard(app.main.allCards[i]);
 									if (crdLvl.length > 1){card.lvl = crdLvl[1];}
 									app.main.enemies[enemyIndex].deck.push(card);
+
 								}
 							}
 						}
 					}
 				}
-				xhrDeck.open('GET',"js/enemies.json",true);
+				xhrDeck.open('GET',"js/enemies.json",false);
 				xhrDeck.send();
 			}
-
+			
 		},
 		
 		getScaling : function(user){
@@ -686,7 +715,7 @@ app.main = {
 				app.main.allCards = myJSON.cards;
 			}
 			
-			xhrCards.open('GET',"js/cards.json",true);
+			xhrCards.open('GET',"js/cards.json",false);
 			xhrCards.send();
 		},
 		
@@ -698,7 +727,7 @@ app.main = {
 		canvasInit : function(){
 			this.canvas = document.getElementById("canvas");
 			this.canvas.width = this.WIDTH;
-			this.canvas.height = this.HEIGHT;
+			this.canvas.height = this.HIEGHT;
 			this.ctx = this.canvas.getContext('2d');
 			var game = document.getElementById("game");
 			game.addEventListener("mousemove", 
@@ -726,32 +755,25 @@ app.main = {
 			this.oldPlayerAttributes = new this.copyAttributes(this.player);
 			
 			this.player.timerGoal = 100/this.player.attributes.speed;
-			//this.getDeck("bug");
-			//this.getDeck("Rock");
-			//this.getDeck("Mushroom");
-			
-			//give ajax time to work its magic
-			setTimeout(function(){
-				//player get deck doesn't use ajax
-				app.main.getDeck("player");
-				app.main.player.deck = app.main.shuffleDeck(app.main.player.deck);
-				app.main.drawCards(app.main.player, 5);
-				for (var i = 0; i <app.main.enemies.length; i++){
-					app.main.enemies[i].deck = app.main.shuffleDeck(app.main.enemies[i].deck);
-					app.main.drawCards(app.main.enemies[i], 3);
-				}
-				app.main.selectedEnemy = app.main.enemies[0];
-				//app.main.saveGame();
-				app.main.deleteGame();
-				console.log("starting fight");
-				app.main.GAMEMODE = "CARDGAME";
-				app.main.getTurnOrder();
-			}, 100);
+
+			app.main.getDeck("player");
+			app.main.player.deck = app.main.shuffleDeck(app.main.player.deck);
+			app.main.drawCards(app.main.player, 5);
+			for (var i = 0; i <app.main.enemies.length; i++){
+				app.main.enemies[i].deck = app.main.shuffleDeck(app.main.enemies[i].deck);
+				app.main.drawCards(app.main.enemies[i], 3);
+			}
+			app.main.selectedEnemy = app.main.enemies[0];
+			//app.main.saveGame();
+			app.main.deleteGame();
+			console.log("starting fight");
+			app.main.GAMEMODE = "CARDGAME";
+			app.main.getTurnOrder();
 		},
 		
 		clearCanvas : function(){
 			this.ctx.fillStyle = "#b35900";
-			this.ctx.fillRect(0,0, this.WIDTH, this.HEIGHT);
+			this.ctx.fillRect(0,0, this.WIDTH, this.HIEGHT);
 			
 		},
 		

@@ -39,7 +39,7 @@ app.deckBuilder = {
 		
 		clearCanvas : function(){
 			app.main.ctx.fillStyle = "grey";
-			app.main.ctx.fillRect(0,0, app.main.WIDTH, app.main.HEIGHT);
+			app.main.ctx.fillRect(0,0, app.main.WIDTH, app.main.HIEGHT);
 		},
 		
 		drawCards : function(array){

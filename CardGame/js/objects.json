@@ -1,0 +1,32 @@
+{"objects":[
+	{
+		"id" : "wallSide",
+		"name" : "wall",
+		"type" : "static",
+		"speed" : 0,
+		"width" : .5,
+		"depth" : 1,
+		"hieght" : .1,
+	},
+	{
+		"id" : "ironChestpiece",
+		"name" : "Iron Cuirass",
+		"type" : "armor",
+		"speed" : 0,
+		"width" : .2,
+		"depth" : .2,
+		"hieght" : .2,
+		"defense" : 1,
+		"durability" : 5,
+	},
+	{
+		"id" : "rockEnemy",
+		"name" : "rock",
+		"type" : "enemy",
+		"speed" : 1,
+		"width" : .05,
+		"depth" : .4,
+		"hieght" : .1,
+	}
+]
+}

@@ -1,0 +1,21 @@
+{"cells":[
+	{
+		"id" : "testCell",
+		"name" : "Test Cell",
+		"width" : 1,
+		"depth" : 1,
+		"objects" : [
+			{"id": "wallSide",
+			 "x" : .8,
+			 "y" : .5,
+			},
+			{"id": "rockEnemy",
+			 "x" : .2,
+			 "y" : .8,
+			},
+		
+		]
+	}
+
+]
+}
