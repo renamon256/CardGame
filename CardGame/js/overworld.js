@@ -47,8 +47,8 @@ app.overworld = {
 				this.objects.push(obj);
 			}
 			*/
-			this.getWorld();
-			this.getCell();
+			//this.getWorld();
+			//this.getCell();
 			
 			
 			this.objects.push(this.playerAvatar);
@@ -82,8 +82,8 @@ app.overworld = {
 			this.organizeObjects
 			this.clearCanvas();
 			
-			//this.drawButton("Battle", app.main.WIDTH/3, app.main.HIEGHT/2, 200, 50);
-			//this.drawButton("Deck Builder", app.main.WIDTH - app.main.WIDTH/3, app.main.HIEGHT/2, 200, 50);
+			this.drawButton("Battle", app.main.WIDTH/3, app.main.HIEGHT/2, 200, 50);
+			this.drawButton("Deck Builder", app.main.WIDTH - app.main.WIDTH/3, app.main.HIEGHT/2, 200, 50);
 			this.renderObjects();
 			
 			drawFPS();
