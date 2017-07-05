@@ -65,9 +65,13 @@ app.cards = {
 				olddmg = dmg;
 				}
 			}
+			this.newDamage(target, "shield", card.pwr - dmg);
 						
 			if (dmg >= 0){
 				target.attributes.health -= dmg;
+				console.log(dmg);
+				//show damage done
+				this.newDamage(target, "melee", dmg);
 				if (card.effect != "none"){
 					this.addEffect(user, card, target);
 				}
@@ -158,6 +162,7 @@ app.cards = {
 			if (effect.timing == "endTurnTarget" && app.main.PHASE == "EndTurn" && app.main.turnOrder[app.main.turnOrderIndex] == card.target.id){
 				if (effect.id == "poison"){
 					card.target.attributes.health -= card.pwr;
+					this.newDamage(card.target, "poison", card.pwr);
 					app.main.checkDead;
 				}
 			}
@@ -189,6 +194,13 @@ app.cards = {
 		}
 		
 		return false
+	},
+	
+	newDamage : function(target, type, dmg){
+		if (dmg > 0){
+			var damage = new app.main.copyDamage(target, type, dmg);
+			app.main.damages.push(damage);
+		}
 	},
 	
 	

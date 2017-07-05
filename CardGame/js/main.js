@@ -7,6 +7,7 @@ var app = app || {};
 
 app.main = {
 		currCell : "testCell",
+		overworldEnemy : null, //enemy to remove when the game ends
 		player : {
 			id : "player",
 			name : "player",
@@ -78,6 +79,9 @@ app.main = {
 		isRMouseDown : false,
 		isFocused : false, //check to see if mouse in on the canvas so coordinates are accurate
 		
+		//what key is being pressed
+		keyDown : "",
+		
 		//canvas stuff
 		canvas: undefined,
 		ctx : undefined,
@@ -103,12 +107,19 @@ app.main = {
 		gainedXp : 0,
 		gainedGp : 0,
 		
+		//for showing damage values
+		damages : [],
+		copyDamage : null,
+		
 		//fps tracker
 		lastCalledTime : null,
 		lastFrameUpdate : null,
 		fps : 0,
 		delta : 0,
 		timesCalled : 0,
+		
+		//timer
+		time : 0,
 		
 		init : function(){
 			
@@ -163,6 +174,26 @@ app.main = {
 				this.droppedItems = enemy.droppedItems;
 				this.droppedCards = enemy.droppedCards;
 			};
+			//constructor for damage HUD element
+			this.copyDamage = function(iTarget, iType, iDmg){
+				this.target = iTarget;
+				this.type = iType;
+				this.dmg = iDmg;
+				
+				if (this.target.id == "player"){this.y = 600; this.x = app.main.WIDTH/2;}
+				else{ 
+					this.y = 100;
+					for(var i = 0; i<app.main.enemies.length; i++){
+						if (app.main.enemies[i] == this.target){
+							this.x = (800/app.main.enemies.length) * i + 200;
+						}
+					}
+				}
+				
+				this.x += (35 * app.main.damages.length);
+				this.endTime = app.main.time + 1000;
+			}
+			
 			
 			this.copyAttributes = function(obj){
 				this.health = obj.attributes.health,
@@ -177,6 +208,8 @@ app.main = {
 			
 			this.getAllCards();
 			this.canvasInit();
+			
+			this.date = new Date();
 			
 		},
 		
@@ -206,6 +239,9 @@ app.main = {
 		//game loop
 		update : function (){
 			this.animationID = requestAnimationFrame(this.update.bind(this));
+			//console.log(this.keydown);
+			
+			this.time = Date.now();
 			
 			if (!this.lastCalledTime){
 				this.lastCalledTime = Date.now();
@@ -254,6 +290,8 @@ app.main = {
 				}
 				
 				this.updateHUD();
+				
+				this.renderDamages();
 				
 				if (this.isShowingCards){
 					this.showCards();
@@ -742,12 +780,22 @@ app.main = {
 					if (e.button == 0){app.main.isLMouseDown = false;} //left click
 					if (e.button == 2){app.main.isRMouseDown = false;} //right click
 			}, false);
+			window.addEventListener("keydown", 
+				function(e){
+					app.main.keyDown = e.key;
+			}, false);
+			/*
+			window.addEventListener("keyup", 
+				function(e){
+					app.main.keyDown = '';
+			}, false);*/
 			game.onfocus = function(){console.log("focus")};
 			game.onblur = function(){console.log("blur")};
 			this.update();
 		},
 		
-		gameStart : function(enemiesStr){
+		gameStart : function(enemiesStr, enemId){
+			this.overworldEnemy = enemId;
 			for (var i = 0; i < enemiesStr.length; i++){
 				console.log(enemiesStr[i])
 				this.getDeck(enemiesStr[i]);
@@ -961,6 +1009,7 @@ app.main = {
 		
 		endGame : function(){
 			this.GAMEMODE = "ENDCARDGAME";
+			app.overworld.removeObj(this.overworldEnemy);
 		},
 		
 		renderResults : function(){
@@ -1018,6 +1067,24 @@ app.main = {
 			app.main.actions.push(action);
 			if (app.main.actions.length > 10){app.main.actions.splice(0,1);};
 		},
+		
+		renderDamages(){
+			for (var i = this.damages.length - 1; i >= 0; i--){
+				var damage = this.damages[i];
+				if (this.time >= damage.endTime){this.damages.splice(i,1)}
+				else{
+					damage.y--;
+					this.ctx.save();
+					if (damage.type == "shield"){this.ctx.fillStyle="Blue";}
+					else if (damage.type == "poison"){this.ctx.fillStyle="Green";}
+					else if (damage.type == "mob"){this.ctx.fillStyle="Orange";}
+					else {this.ctx.fillStyle="Red";}
+					this.ctx.font = "bold 50px Arial";
+					this.ctx.fillText(damage.dmg, damage.x, damage.y);
+					this.ctx.restore();
+				}
+			}
+		}
 		
 		
 };

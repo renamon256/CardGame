@@ -70,6 +70,30 @@
 		"droppedCards" : [["psnSpore", 1],["psnSpore+1",.5],["psnSpore+2",.25], ["psnSpore+3",.1]],
 		"droppedItems" : [["poison mushroom", .5]],
 		
+	},
+	{
+		"name":"Budding Mushroom",
+		"personality":"poison",
+		"deck":[],
+		"strdeck":["psnSpore", "psnSpore", "psnSpore", "psnSpore", "psnSpore", "psnSpore", "psnSpore", "psnSpore"],
+		"hand" : [],
+		"attributes":{
+			"health" : 20,
+			"maxHealth" : 20,
+			"attack" : 1,
+			"defense" : 1,
+			"speed" : 7,
+			"intellegence" : 1,
+			"adaptability" : 1,
+			"luck" : 1
+		},
+		"apRegen" : 1,
+		"ap" : 1,
+		"xp" : 5,
+		"gp" : 5,
+		"droppedCards" : [["psnSpore", 1],["psnSpore+1",.5],["psnSpore+2",.25], ["psnSpore+3",.1]],
+		"droppedItems" : [["poison mushroom", .5]],
+		
 	}
 	]
 }

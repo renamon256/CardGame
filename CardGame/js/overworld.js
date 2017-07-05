@@ -19,6 +19,7 @@ app.overworld = {
 			scale : 0,
 		},
 		currentCellId : "testCell",
+		perspectiveScale : 1,
 		world : null,
 		perspectiveDistance : 500,
 		copyObject : null,
@@ -28,27 +29,25 @@ app.overworld = {
 		init : function(){
 			console.log("overworld init");
 			this.copyObject = function(objPrefab, objWorld){
+				this.imgref = objPrefab.id; //common name that multiple of the same object use, used for images
 				this.id = objPrefab.id + app.main.idNum;
 				console.log(this.id);
-				this.x = objWorld.x * app.main.WIDTH;
-				this.y = objWorld.y * app.main.HIEGHT;
+				this.x = objWorld.x ;
+				this.y = objWorld.y;
 				this.z = 0;
 				this.speed = 0;
-				this.width = objPrefab.width * app.main.WIDTH;
-				this.depth = objPrefab.depth * app.main.HIEGHT;
-				this.hieght = objPrefab.hieght * app.main.HIEGHT;
+				this.width = objPrefab.width;
+				this.depth = objPrefab.depth;
+				this.hieght = objPrefab.hieght;
 				this.isColliding = false;
-				this.scale = 0;
+				this.imageDir = objPrefab.imageDir;
+				this.type = objPrefab.type;
+				if (objWorld.scale == null){this.scale = 1}else{this.scale = objWorld.scale;}
+				if (this.type == "enemy"){this.enemies = objPrefab.enemies}
 				app.main.idNum++;
 			}
-			/*
-			for (var i = 0; i < 20; i++){
-				var obj = new this.copyObject();
-				this.objects.push(obj);
-			}
-			*/
-			//this.getWorld();
-			//this.getCell();
+			this.getWorld();
+			this.getCell();
 			
 			
 			this.objects.push(this.playerAvatar);
@@ -57,8 +56,17 @@ app.overworld = {
 			this.drawOverworld();
 			if (app.main.isLMouseDown){
 				this.playerAvatar.target.x = app.main.mouseX;
-				this.playerAvatar.target.y = app.main.mouseY
+				this.playerAvatar.target.y = app.main.mouseY;
 			}
+			console.log(app.main.keyDown);
+			//keyboardMovement
+			if (app.main.keyDown == 'w' || app.main.keyDown == 'ArrowUp'){this.playerAvatar.target.y = this.playerAvatar.y - 20;}
+			if (app.main.keyDown == 's' || app.main.keyDown == 'ArrowDown'){this.playerAvatar.target.y = this.playerAvatar.y + 20;}
+			if (app.main.keyDown == 'd' || app.main.keydown == 'ArrowRight'){this.playerAvatar.target.x = this.playerAvatar.x + 20;}
+			if (app.main.keyDown == 'a' || app.main.keydown == 'ArrowLeft'){this.playerAvatar.target.x = this.playerAvatar.x - 20;}
+			
+			if (app.main.keyDown != ""){app.main.keyDown = ""}
+			
 			var moveX = this.playerAvatar.target.x - this.playerAvatar.x;
 			var moveY = this.playerAvatar.target.y - this.playerAvatar.y;
 			if (Math.abs(moveX) + Math.abs(moveY) > 5){
@@ -66,6 +74,7 @@ app.overworld = {
 				vector = multiplyVector (vector, this.playerAvatar.speed)
 				this.move(this.playerAvatar, vector);
 			}
+			
 			
 			this.collisionDetection();
 			
@@ -82,8 +91,8 @@ app.overworld = {
 			this.organizeObjects
 			this.clearCanvas();
 			
-			this.drawButton("Battle", app.main.WIDTH/3, app.main.HIEGHT/2, 200, 50);
-			this.drawButton("Deck Builder", app.main.WIDTH - app.main.WIDTH/3, app.main.HIEGHT/2, 200, 50);
+			//this.drawButton("Battle", app.main.WIDTH/3, app.main.HIEGHT/2, 200, 50);
+			//this.drawButton("Deck Builder", app.main.WIDTH - app.main.WIDTH/3, app.main.HIEGHT/2, 200, 50);
 			this.renderObjects();
 			
 			drawFPS();
@@ -112,12 +121,16 @@ app.overworld = {
 			var y = object.y;
 			var z = object.z;
 			var scale = y/this.perspectiveDistance;
-			object.scale = scale;
+			//object.scale = scale;
 			ctx.save();
 			if (object.isColliding){ctx.fillStyle = "red";}
 			else{ctx.fillStyle = "black";}
-			ctx.transform(scale, 0, 0, scale, x, y + z);
-			ctx.fillRect(-object.width/2, -object.hieght, object.width, object.hieght);
+			ctx.transform(scale * object.scale, 0, 0, scale * object.scale, x, y + z);
+			if (document.getElementById(object.imgref) != null){
+				var img = document.getElementById(object.imgref);
+				ctx.drawImage(img, -object.width/2, -object.hieght);
+			}
+			else {ctx.fillRect(-object.width/2, -object.hieght, object.width, object.hieght);}
 			ctx.restore();
 			
 			if (this.boundingBoxVisible){this.renderBoundingBox(object)}
@@ -180,7 +193,9 @@ app.overworld = {
 			
 			for (var i = 0; i < this.objects.length - 1; i++){
 					for (var j = i + 1; j < this.objects.length; j++){
-						this.checkCollisionBetweenObjects(this.objects[i], this.objects[j]);
+						if (this.objects[i].type != "dec" &&  this.objects[j].type != "dec"){
+							this.checkCollisionBetweenObjects(this.objects[i], this.objects[j]);
+						}
 					}
 			}
 		},
@@ -212,8 +227,8 @@ app.overworld = {
 			var depth = obj.depth;
 			var hieght = obj.hieght;
 			var scale = y/this.perspectiveDistance;
-			var scaleBack = (y - depth/2)/this.perspectiveDistance;
-			var scaleFront = (y + depth/2)/this.perspectiveDistance;
+			var scaleBack = y/this.perspectiveDistance;
+			var scaleFront = (y + depth)/this.perspectiveDistance;
 			ctx.save();
 			ctx.transform(1, 0, 0, 1, x, y + z);
 			ctx.strokeStyle = "green"
@@ -247,11 +262,14 @@ app.overworld = {
 		},
 		
 		resolveCollision(obj1, obj2){
+			if (obj1.type == "enemy" && obj2.id == "player"){app.main.gameStart(obj1.enemies, obj1.id)}
+			if (obj2.type == "enemy" && obj1.id == "player"){app.main.gameStart(obj2.enemies, obj2.id)}
+			
 			var vector = normalize(obj1.x - obj2.x, obj1.y - obj2.y,obj1.z - obj2.z)
-			var obj1vector = multiplyVector(vector, obj1.speed);
+			var obj1vector = multiplyVector(vector, obj1.speed * 2);
 			this.move(obj1, obj1vector);
 			
-			var obj2vector = multiplyVector(vector, obj2.speed);
+			var obj2vector = multiplyVector(vector, obj2.speed * 2);
 			obj2vector = multiplyVector(vector, -1);
 			this.move(obj2, obj2vector);
 			//console.log(obj1.id + "x: " + obj1.x + "y:" + obj1.y + "z:" + obj1.z)
@@ -298,6 +316,7 @@ app.overworld = {
 										var pObject = pObjects[k];
 										var tempObj = new app.overworld.copyObject(pObject, wObj);
 										app.overworld.objects.push(tempObj);
+										addImage(tempObj.imageDir, tempObj.imgref);
 									}
 								}
 							}
@@ -308,7 +327,29 @@ app.overworld = {
 			xhrDeck.send();
 		},
 		
+		removeObj(id){
+			for (var i = 0; i < this.objects.length; i++){
+				if (this.objects[i].id == id){
+					this.objects.splice(i,1);
+				}
+			}
+		}
+		
 };
+
+function addImage(imagePath, imgref){
+	
+	if (imagePath != null && imagePath != undefined){
+	if (document.getElementById(imgref) == null){
+		var newImg = document.createElement("img");
+		//newImg.src = "images/npc/rock/rock01.png";
+		newImg.src = imagePath;
+		newImg.id = imgref;
+		
+		document.getElementById("images").append(newImg);
+	}
+	}
+}
 
 function normalize(ix,iy,iz){
 	var c = Math.sqrt((ix * ix) + (iy * iy) + (iz * iz))
@@ -322,6 +363,7 @@ function multiplyVector(vector, i){
 	vector.z = vector.z * i;
 	return vector;
 }
+
 
 
 function drawFPS(){

@@ -1,0 +1,5 @@
+card selection off for player
+collision does not work from the bottom
+shield damage does not work properly
+shield showing incorrect damage
+movement sticks when using WASD or arrow keys
